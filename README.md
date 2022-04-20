@@ -11,28 +11,36 @@ See our manuscript for more details.
 * numpy 1.19
 * pandas 1.3
 * h5py 2.10
+* r-scgnnltmg 0.1
 * scipy 1.7
 * scikit-learn 1.0
  
 ## Usage
-### Inferring gene regulation networks with a trained model
-Example: Inferring gene regulation networks from human embryonic stem cells (hESCs) dataset.  
-```
->> python infering.py
-```
+### Inferring gene regulation networks from scRNA-seq data
+To infer gene regulation networks from scRNA-seq data using `main.py` script with the following options:  
+* `input_path` string, the path of input dataset
+* `output_path` string, the path of DeepRIG's output
+* `cv` int, Folds for cross validation (Default 3)
+* `ratio` int, Ratio of negative samples to positive samples (Default 1)
+* `dim` int, The dimension of latent representations (Default 300)
+* `hidden1` int, Number of unites in hidden layers (Default 200)
+* `epochs` int, Number of epochs to train (Default 500)
+* `learning_rate` float, Initial learning rate (Default 0.01)
+* `dropout` float, Dropout rate in all layers in GCNs (Default 0.7)
  
-### Train and test DeepRIG
-Example: You can also train and test DeepRIG with a new dataset by following codes:
+Note: The name of input file is expected as "DatasetName" + "-ExpressionData"/"-network". 
+ 
+Example: Inferring GRNs from scRNA-seq of mouse embryonic stem cells (mESC) using DeepRIG by following codes:
 ```
->> python main.py --input ./Datasets/mESC/  --network ./Datasets/mESC/refNetwork.csv  --output ./output/ 
+>> python main.py --input_path ./Datasets/500_ChIP-seq_mESC/ --output_path ./output/ --cv 5
 ```
 ### Outputs
 * `Inferred_result_dataset_name.csv` Inferred gene regulation associations ranked by their edgeweights.
  
 ### Evaluation
-Example: To evaluate the inferred results of DeepRIG from hESC dataset, run the following command:
+Example: To evaluate the inferred results of DeepRIG from mESC dataset, run the following command:
 ```
-python evaluate.py --pred_file ./output/ --network ./Datasets/hESC/refNetworks.csv
+python evaluate.py --pred_file ./output/Inferred_result_500_ChIP-seq_mESC.csv --network ./Datasets/500_ChIP-seq_mESC/500_ChIP-seq-networks.csv
 ```
  
 ## Datasets
