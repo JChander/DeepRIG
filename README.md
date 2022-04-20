@@ -28,7 +28,7 @@ To infer gene regulation networks from scRNA-seq data using `main.py` script wit
 * `learning_rate` float, Initial learning rate (Default 0.01)
 * `dropout` float, Dropout rate in all layers in GCNs (Default 0.7)
  
-Note: The name of input file is expected as "DatasetName" + "-ExpressionData"/"-network". 
+Note: The names of gene expression file and ground truth file are expected as "DatasetName" + "-ExpressionData.csv"/"-network.csv". 
  
 Example: Inferring GRNs from scRNA-seq of mouse embryonic stem cells (mESC) using DeepRIG by following codes:
 ```
