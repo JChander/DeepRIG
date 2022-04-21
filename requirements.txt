@@ -1,0 +1,8 @@
+numpy~=1.19
+pandas~=1.3
+tensorflow~=2.4.0
+tensorflow-gpu~=2.4.0
+scipy~=1.7
+scgnnltmg~=0.1
+networkx~=2.5
+scikit-learn~=1.0
