@@ -1,0 +1,139 @@
+#from pylab import *
+import random
+import pandas as pd
+from deeprig.inits import *
+
+def parse_index_file(filename):
+    """Parse index file."""
+    index = []
+    for line in open(filename):
+        index.append(int(line.strip()))
+    return index
+
+
+def sample_mask(idx, l):
+    """Create mask."""
+    mask = np.zeros(l)
+    mask[idx] = 1
+    return np.array(mask, dtype=np.bool)
+
+
+def load_data(adj, train_arr, test_arr, labels, AM):
+    n_gene = AM.shape[0]
+
+    logits_test = sp.csr_matrix((labels[test_arr, 2], (labels[test_arr, 0], labels[test_arr, 1])), shape = (n_gene, n_gene)).toarray()
+    #logits_test = sp.csr_matrix((labels[test_arr, 2], (labels[test_arr, 0] - 1, labels[test_arr, 1] - 1)),
+                                #shape=(n_gene, n_gene)).toarray()
+    logits_test = logits_test.reshape([-1, 1])
+
+    adj = preprocess_adj(adj)
+    logits_train = sp.csr_matrix((labels[train_arr, 2], (labels[train_arr, 1], labels[train_arr, 1])), shape = (n_gene, n_gene)).toarray()
+    logits_train = logits_train.reshape([-1, 1])
+
+    train_mask = np.array(logits_train[:, 0], dtype=np.bool).reshape([-1, 1])
+    test_mask = np.array(logits_test[:, 0], dtype=np.bool).reshape([-1, 1])
+
+
+    return adj, n_gene, logits_train, logits_test, train_mask, test_mask, labels
+
+
+def generate_mask(labels, ratio, N, n_gene):
+    num = 0
+    A = sp.csr_matrix((labels[:, 2], (labels[:, 0], labels[:, 1])), shape=(n_gene, n_gene)).toarray()
+    mask = np.zeros((n_gene, n_gene))
+    label_neg = np.zeros((ratio * N, 2))
+    while (num < ratio * N):
+        a = random.randint(0, n_gene - 1)
+        b = random.randint(0, n_gene - 1)
+        if A[a, b] != 1 and mask[a, b] != 1:
+            mask[a, b] = 1
+            label_neg[num, 0] = a
+            label_neg[num, 1] = b
+            num += 1
+    mask = np.reshape(mask, [-1, 1])
+    return mask, label_neg
+
+
+def normalize_adj(adj):
+    """Symmetrically normalize adjacency matrix."""
+    adj = sp.coo_matrix(adj)
+    rowsum = np.array(adj.sum(1))
+    d_inv_sqrt = np.power(rowsum, -0.5).flatten()
+    d_inv_sqrt[np.isinf(d_inv_sqrt)] = 0.
+    d_mat_inv_sqrt = sp.diags(d_inv_sqrt)
+    adj = adj.dot(d_mat_inv_sqrt).transpose().dot(d_mat_inv_sqrt)
+    return adj.toarray()
+
+
+def preprocess_adj(adj):
+    """Preprocessing of adjacency matrix for simple GCN model and conversion to tuple representation."""
+    adj_normalized = normalize_adj(adj) + np.eye(adj.shape[0])
+    return adj_normalized
+
+
+def construct_feed_dict(adj, labels, labels_mask, negative_mask, placeholders):
+    """Construct feed dictionary."""
+    feed_dict = dict()
+    feed_dict.update({placeholders['adjacency_matrix']: adj})
+    feed_dict.update({placeholders['labels']: labels})
+    feed_dict.update({placeholders['labels_mask']: labels_mask})
+    feed_dict.update({placeholders['negative_mask']: negative_mask})
+    return feed_dict
+
+
+def div_list(ls, n):
+    ls_len = len(ls)
+    j = ls_len // n
+    ls_return = []
+    for i in range(0, (n - 1) * j, j):
+        ls_return.append(ls[i:i + j])
+    ls_return.append(ls[(n - 1) * j:])
+    return ls_return
+
+
+def ROC(outs, labels, train_mask, test_mask, label_neg, gene_names, result_path):
+    # scores = []
+    results = pd.DataFrame(columns = ['Gene1', 'Gene2', 'Label', 'EdgeWeight'])
+    # for i in range(len(test_arr)):
+    #     l = test_arr[i]
+    #     score_l = outs[int(labels[l, 0]), int(labels[l, 1])]
+    #     scores.append(score_l)
+    #     new_df = pd.DataFrame({'Gene1': gene_names[labels[l, 0]],
+    #                                    'Gene2': gene_names[labels[l, 1]],
+    #                                    'Label': 1,
+    #                                    'EdgeWeight': score_l}, index=[1])
+    #     results = results.append(new_df, ignore_index=True)
+
+    # for i in range(label_neg.shape[0]):
+    #     score_i = outs[int(label_neg[i, 0]), int(label_neg[i, 1])]
+    #     scores.append(score_i)
+    #     new_df = pd.DataFrame({'Gene1': gene_names[int(label_neg[i, 0])],
+    #                                    'Gene2': gene_names[int(label_neg[i, 1])],
+    #                                    'Label': 0,
+    #                                    'EdgeWeight': score_i}, index=[1])
+    #     results = results.append(new_df, ignore_index=True)
+    train_mask = train_mask[:, 0].reshape(outs.shape)
+    test_mask = test_mask[:, 0].reshape(outs.shape)
+    
+    for i in range(outs.shape[0]):
+        for j in range(outs.shape[1]):
+            if train_mask[i, j] == 1:
+                continue
+            else:
+                if test_mask[i, j] == 1:
+                    label_true = 1
+                else:
+                    label_true = 0
+                new_df = pd.DataFrame({'Gene1': gene_names[i],
+                                       'Gene2': gene_names[j],
+                                       'Label': label_true,
+                                       'EdgeWeight': outs[i, j]}, index=[1])
+                results = results.append(new_df, ignore_index=True)
+
+    results = results.sort_values(by = ['EdgeWeight'], axis = 0, ascending = False)
+    results.to_csv(result_path, header=True, index=False)
+    # test_labels = np.ones((len(test_arr), 1))
+    # temp = np.zeros((label_neg.shape[0], 1))
+    # test_labels1 = np.vstack((test_labels, temp))
+    # test_labels1 = np.array(test_labels1, dtype=np.bool).reshape([-1, 1])
+    # return test_labels1, scores
