@@ -44,7 +44,7 @@ python evaluate.py --pred_file ./output/Inferred_result_500_ChIP-seq_mESC.csv --
 ```
  
 ## Datasets
-Demo datasets used in DeepRIG:
+Demo datasets used in DeepRIG, each dataset directory contains gene expression data, ground truth networks, and generated pseudotime information.
 * hESC Human embryonic stem cells
 * mESC mouse embryonic stem cells
 * mDC mouse dendritic cells
