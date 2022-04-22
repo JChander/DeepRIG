@@ -1,5 +1,5 @@
 # DeepRIG
-A deep learning-based model for gene regulation networks (GRNs) inferrence from scRNA-seq data that transforms gene expression matrix into a correlation-based co-expression network and decouples the non-linear gene regulation patterns using relational graph convolution networks (GCNs).
+A deep learning-based model for gene regulation networks (GRNs) inferrence from scRNA-seq data that transforms gene expression matrix into a correlation-based co-expression network and decouples the non-linear gene regulation patterns using relational graph convolution networks (R-GCNs).
  
 See our manuscript for more details.
  
