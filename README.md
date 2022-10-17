@@ -1,5 +1,5 @@
 # DeepRIG
-A deep learning-based model for gene regulation networks (GRNs) inferrence from scRNA-seq data that transforms gene expression matrix into a correlation-based co-expression network and decouples the non-linear gene regulation patterns using relational graph convolution networks (R-GCNs).
+A deep learning-based model for gene regulation networks (GRNs) inferrence from scRNA-seq data that transforms gene expression matrix into a correlation-based co-expression network and decouples the non-linear gene regulation patterns using relational graph convolution networks (GCNs).
  
 See our manuscript for more details.
  
@@ -11,10 +11,23 @@ See our manuscript for more details.
 * numpy 1.19
 * pandas 1.3
 * h5py 2.10
-* r-scgnnltmg 0.1
 * scipy 1.7
 * scikit-learn 1.0
  
+## Installation
+Installing within a conda environment is recommended. After Anaconda is installed in your OS, create a new environment.
+```
+>> conda create -n new_environ_name python=3.7
+```
+The `new_environ_name` is the new environment name with any name you prefer. Then activate your environment using following command:
+```
+>> conda activate new_environ_name
+```
+Installing all the dependencies recorded in the `requirements.txt` file in this repository using conda:
+```
+>> conda install --yes --file requirements.txt
+```
+
 ## Usage
 ### Inferring gene regulation networks from scRNA-seq data
 To infer gene regulation networks from scRNA-seq data using `main.py` script with the following options:  
@@ -42,9 +55,12 @@ Example: To evaluate the inferred results of DeepRIG from mESC dataset, run the 
 ```
 python evaluate.py --pred_file ./output/Inferred_result_500_ChIP-seq_mESC.csv --network ./Datasets/500_ChIP-seq_mESC/500_ChIP-seq-networks.csv
 ```
+
+### Cell-type specific GRNs inferring
+*DeepRIG** also provides the cell-type specific GRNs inference. A Jupyter Notebook of the turorial is accessible for the cell-type specific GRNs inference.
  
 ## Datasets
-Demo datasets used in DeepRIG, each dataset directory contains gene expression data, ground truth networks, and generated pseudotime information.
+Demo datasets used in DeepRIG:
 * hESC Human embryonic stem cells
 * mESC mouse embryonic stem cells
 * mDC mouse dendritic cells
