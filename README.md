@@ -57,7 +57,7 @@ python evaluate.py --pred_file ./output/Inferred_result_500_ChIP-seq_mESC.csv --
 ```
 
 ### Cell-type specific GRNs inferring
-*DeepRIG** also provides the cell-type specific GRNs inference. A Jupyter Notebook of the turorial is accessible for the cell-type specific GRNs inference.
+**DeepRIG** also provides the cell-type specific GRNs inference. A Jupyter Notebook of the turorial is accessible for the cell-type specific GRNs inference.
  
 ## Datasets
 Demo datasets used in DeepRIG:
