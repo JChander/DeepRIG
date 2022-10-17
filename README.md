@@ -11,6 +11,7 @@ See our manuscript for more details.
 * numpy 1.19
 * pandas 1.3
 * h5py 2.10
+* scanpy 1.7
 * scipy 1.7
 * scikit-learn 1.0
  
