@@ -1,7 +1,7 @@
 # DeepRIG
-A deep learning-based model for gene regulation networks (GRNs) inferrence from scRNA-seq data that transforms gene expression matrix into a correlation-based co-expression network and decouples the non-linear gene regulation patterns using relational graph convolution networks (GCNs).
+A deep learning-based model for gene regulatary networks (GRNs) inferrence from scRNA-seq data that transforms gene expression matrix into a correlation-based co-expression network and decouples the non-linear gene regulation patterns using graph autoencoder model (GAE).
  
-See our manuscript for more details.
+Please see our manuscript for more details.
  
 ## Dependencies
  
@@ -30,8 +30,8 @@ Installing all the dependencies recorded in the `requirements.txt` file in this 
 ```
 
 ## Usage
-### Inferring gene regulation networks from scRNA-seq data
-To infer gene regulation networks from scRNA-seq data using `main.py` script with the following options:  
+### Inferring gene regulatary networks from scRNA-seq data
+To infer gene regulatary networks from scRNA-seq data using `main.py` script with the following options:  
 * `input_path` string, the path of input dataset
 * `output_path` string, the path of DeepRIG's output
 * `cv` int, Folds for cross validation (Default 3)
