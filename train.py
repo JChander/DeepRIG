@@ -7,7 +7,7 @@ from util.utils import *
 from deeprig.models import DeepRIG
 
 
-def train(FLAGS, adj, train_arr, test_arr, labels, AM, gene_names, TF, result_path):
+def train(FLAGS, adj, features, train_arr, test_arr, labels, AM, gene_names, TF, result_path):
     # Load data
     adj, size_gene, logits_train, logits_test, train_mask, test_mask, labels= load_data(
         adj, train_arr, test_arr, labels, AM)
@@ -22,21 +22,23 @@ def train(FLAGS, adj, train_arr, test_arr, labels, AM, gene_names, TF, result_pa
     tf.compat.v1.disable_eager_execution()
     placeholders = {
         'adjacency_matrix': tf.placeholder(tf.int32, shape=adj.shape),
+        'features': tf.placeholder(tf.float32, shape= features.shape),
         'labels': tf.placeholder(tf.float32, shape=(None, logits_train.shape[1])),
         'labels_mask': tf.placeholder(tf.int32),
         'negative_mask': tf.placeholder(tf.int32)
     }
-
+    
+    input_dim = features.shape[1]
     # Create model
-    model = model_func(placeholders, size_gene, FLAGS.dim)
+    model = model_func(placeholders, input_dim, size_gene, FLAGS.dim)
 
     # Initialize session
     sess = tf.Session()
 
     # Define model evaluation function
-    def evaluate(adj, labels, mask, negative_mask, placeholders):
+    def evaluate(adj, features, labels, mask, negative_mask, placeholders):
         t_test = time.time()
-        feed_dict_val = construct_feed_dict(adj, labels, mask, negative_mask, placeholders)
+        feed_dict_val = construct_feed_dict(adj, features, labels, mask, negative_mask, placeholders)
         outs_val = sess.run([model.loss, model.accuracy], feed_dict=feed_dict_val)
         return outs_val[0], 1 - outs_val[1], (time.time() - t_test)
 
@@ -51,7 +53,7 @@ def train(FLAGS, adj, train_arr, test_arr, labels, AM, gene_names, TF, result_pa
         # Construct feed dictionary
         negative_mask, label_neg = generate_mask(labels, FLAGS.ratio, len(train_arr), size_gene)
 
-        feed_dict = construct_feed_dict(adj, logits_train, train_mask, negative_mask, placeholders)
+        feed_dict = construct_feed_dict(adj, features, logits_train, train_mask, negative_mask, placeholders)
 
         # Training step
         outs = sess.run([model.opt_op, model.loss, model.accuracy], feed_dict=feed_dict)
@@ -69,12 +71,12 @@ def train(FLAGS, adj, train_arr, test_arr, labels, AM, gene_names, TF, result_pa
     
     # Testing
     test_negative_mask, test_label_neg = generate_mask(labels, FLAGS.ratio, len(test_arr), size_gene)
-    test_cost, test_acc, test_duration = evaluate(adj, logits_test, test_mask, test_negative_mask, placeholders)
+    test_cost, test_acc, test_duration = evaluate(adj, features, logits_test, test_mask, test_negative_mask, placeholders)
     print("Test set results:", "cost=", "{:.5f}".format(test_cost),
           "accuracy=", "{:.5f}".format(test_acc), "time=", "{:.5f}".format(test_duration))
 
     #Save results
-    feed_dict_val = construct_feed_dict(adj, logits_test, test_mask, test_negative_mask, placeholders)
+    feed_dict_val = construct_feed_dict(adj, features, logits_test, test_mask, test_negative_mask, placeholders)
     outs = sess.run(model.outputs, feed_dict=feed_dict_val)
     outs = np.array(outs)[:, 0]
     outs = outs.reshape((size_gene, size_gene))
@@ -93,5 +95,4 @@ def train(FLAGS, adj, train_arr, test_arr, labels, AM, gene_names, TF, result_pa
     results = pd.DataFrame(
         {'Gene1': geneNames[idx_rec], 'Gene2': geneNames[idx_send], 'EdgeWeight': (outs[idx_rec, idx_send])})
     results = results.sort_values(by = ['EdgeWeight'], axis = 0, ascending = False)
-    #results.to_csv(result_path, header=True, index=False)
     return results
