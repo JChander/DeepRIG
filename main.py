@@ -13,7 +13,7 @@ tf.set_random_seed(seed)
 flags = tf.compat.v1.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_string('model', 'DeepRIG', 'Model string.')  # 'gcn', 'gcn_cheby', 'dense'
-flags.DEFINE_string('input_path', './Datasets/500_ChIP-seq_hESC/', 'Input data path')
+flags.DEFINE_string('input_path', './Datasets/500_ChIP-seq_mESC/', 'Input data path')
 flags.DEFINE_string('output_path', './output/', 'Output data path')
 flags.DEFINE_float('learning_rate', 0.01, 'Initial learning rate.')
 flags.DEFINE_integer('cv', 3, 'Folds for cross validation.')
@@ -29,11 +29,8 @@ flags.DEFINE_integer('dim', 300, 'The size of latent factor vector.')
 def computCorr(data, t = 0.0):
 
     genes = data.columns
-    corr = data.corr()
-    print(corr.shape)
+    corr = data.corr(method = "spearman)
 
-    corr.values[corr.values < 0.0] = 0.0
-    corr.values[corr.values > 0.4] = 1.0
     adj = np.array(corr.values)
     return adj
 
@@ -63,7 +60,8 @@ def prepareData(FLAGS, data_path, label_path, reverse_flags = 0):
     labels = np.array(labels)
     print("Start to compute correlations between genes!")
     adj = computCorr(data)
-    return labels, adj, AM, var_names, TF
+    node_feat = data.T.values
+    return labels, adj, AM, var_names, TF, node_feat
 
 
 # Preparing data for training
@@ -92,7 +90,7 @@ for t in range(T):
         arr = list(set(reorder).difference(set(test_arr)))
         np.random.shuffle(arr)
         train_arr = arr
-        pred_matrix = train(FLAGS, adj, train_arr, test_arr, labels, AM, gene_names, TF, result_path_cv)
+        pred_matrix = train(FLAGS, adj, node_feat, train_arr, test_arr, labels, AM, gene_names, TF, result_path_cv)
         pred_results.append(pred_matrix)
 
     output = pred_results[0]
