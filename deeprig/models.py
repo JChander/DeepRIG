@@ -91,11 +91,12 @@ class Model(object):
 
 
 class DeepRIG(Model, ):
-    def __init__(self, placeholders, size_gene, latent_factor_num, **kwargs):
+    def __init__(self, placeholders, input_dim, size_gene, latent_factor_num, **kwargs):
         super(DeepRIG, self).__init__(**kwargs)
-
+        self.inputs = placeholders['features']
         self.placeholders = placeholders
         self.size_gene = size_gene
+        self.input_dim = input_dim
         self.latent_factor_num = latent_factor_num
         self.optimizer = tf.train.AdamOptimizer(learning_rate=FLAGS.learning_rate)
         self.build()
@@ -116,11 +117,11 @@ class DeepRIG(Model, ):
                                         self.placeholders['negative_mask'])
 
     def _build(self):
-        self.layers.append(Encoder(input_dim=self.size_gene,
+        self.layers.append(Encoder(input_dim=self.input_dim,
                                    output_dim=FLAGS.hidden1,
                                    gene_size = self.size_gene,
                                    dropout = 0.,
-                                   featureless = True,
+                                   featureless = False,
                                    placeholders=self.placeholders
                                    ))
 
