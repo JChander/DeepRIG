@@ -133,7 +133,7 @@ class Encoder(Layer):
 class Decoder(Layer):
     """Decoder layer."""
 
-    def __init__(self, size1, latent_factor_num, placeholders, **kwargs):
+    def __init__(self, size1, latent_factor_num, placeholders, act = tf.nn.sigmoid, **kwargs):
         super(Decoder, self).__init__(**kwargs)
         self.size1 = size1
         with tf.variable_scope(self.name + '_vars'):
@@ -142,4 +142,4 @@ class Decoder(Layer):
     def _call(self, hidden):
         M1 = dot(dot(hidden, self.vars['weight3']), tf.transpose(hidden))
         M1 = tf.reshape(M1, [-1, 1])
-        return M1
+        return self.act(M1)
