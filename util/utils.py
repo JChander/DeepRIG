@@ -75,6 +75,7 @@ def construct_feed_dict(adj, labels, labels_mask, negative_mask, placeholders):
     """Construct feed dictionary."""
     feed_dict = dict()
     feed_dict.update({placeholders['adjacency_matrix']: adj})
+    feed_dict.update({placeholders['features']: features})
     feed_dict.update({placeholders['labels']: labels})
     feed_dict.update({placeholders['labels_mask']: labels_mask})
     feed_dict.update({placeholders['negative_mask']: negative_mask})
