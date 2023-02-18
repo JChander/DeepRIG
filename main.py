@@ -97,7 +97,7 @@ for t in range(T):
     for i in range(1, cv_num):
     	output = pd.concat([output, pred_results[i]])
     output['EdgeWeight'] = abs(output['EdgeWeight'])
-    output.groupby(['Gene1', 'Gene2']).mean()
+
     result_path = output_path + '/Inferred_result_' + dataset + '.csv'
     output.to_csv(result_path, header=True, index=False)
         
