@@ -63,9 +63,9 @@ if __name__ == '__main__':
 	
 	dataset  = groud_truth.split('/')[-2]
 	output = pd.read_csv(args.pred_file, header = 0, sep=',')
-	
 	label = pd.read_csv(groud_truth, header = 0, sep = ',')
-
+	
+	output = output.groupby([output['Gene1'], output['Gene2']], as_index=False).mean()
 	output = output[output['Gene1'] != output['Gene2']]
 	auc, aupr = evaluateAU(output, label)
 
