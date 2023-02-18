@@ -29,7 +29,7 @@ flags.DEFINE_integer('dim', 300, 'The size of latent factor vector.')
 def computCorr(data, t = 0.0):
 
     genes = data.columns
-    corr = data.corr(method = "spearman)
+    corr = data.corr(method = "spearman")
 
     adj = np.array(corr.values)
     return adj
