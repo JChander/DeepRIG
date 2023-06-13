@@ -31,7 +31,7 @@ def computCorr(data, t = 0.0):
     genes = data.columns
     corr = data.corr(method = "spearman")
 
-    adj = np.array(corr.values)
+    adj = np.array(abs(corr.values))
     return adj
 
 def prepareData(FLAGS, data_path, label_path, reverse_flags = 0):
