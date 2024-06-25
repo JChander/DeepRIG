@@ -54,7 +54,7 @@ Example: Inferring GRNs from scRNA-seq of mouse embryonic stem cells (mESC) usin
 ### Evaluation
 Example: To evaluate the inferred results of DeepRIG from mESC dataset, run the following command:
 ```
-python evaluate.py --pred_file ./output/Inferred_result_500_ChIP-seq_mESC.csv --network ./Datasets/500_ChIP-seq_mESC/500_ChIP-seq-networks.csv
+python evaluate.py --pred_file ./output/Inferred_result_500_ChIP-seq_mESC.csv --network ./Datasets/500_ChIP-seq_mESC/500_ChIP-seq_mESC-networks.csv
 ```
 
 ### Cell-type specific GRNs inferring
