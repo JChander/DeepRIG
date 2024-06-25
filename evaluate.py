@@ -64,11 +64,14 @@ if __name__ == '__main__':
 	dataset  = groud_truth.split('/')[-2]
 	output = pd.read_csv(args.pred_file, header = 0, sep=',')
 	label = pd.read_csv(groud_truth, header = 0, sep = ',')
-	
+
 	output = output.groupby([output['Gene1'], output['Gene2']], as_index=False).mean()
 	output = output[output['Gene1'] != output['Gene2']]
 	auc, aupr = evaluateAU(output, label)
-
+	print("========================Evaluation of Dataset: ", dataset, "========================")
+	print("The AUC is:", '{:.4f}'.format(auc))
+	print("The AUPR is:",'{:.4f}'.format(aupr))
+	
 	output['EdgeWeight'] = abs(output['EdgeWeight'])
 	output = output.sort_values('EdgeWeight',ascending=False)
 	
@@ -78,9 +81,7 @@ if __name__ == '__main__':
 	output = output[output['Gene2'].apply(lambda x: x in Genes)]
 	epr = evaluateEPR(output, label, TFs, Genes)
 	aupr_1, aupr_ratio = evaluateAUPRratio(output, label, TFs, Genes)
-	print("========================Evaluation of Dataset: ", dataset, "========================")
-	print("The AUC is:", '{:.4f}'.format(auc))
-	print("The AUPR is:",'{:.4f}'.format(aupr))
+	
 	print("The EPR is:", '{:.4f}'.format(epr))
 	print("The AUPR is:", '{:.4f}'.format(aupr_1))
 	print("The AUPR ratio is:", '{:.4f}'.format(aupr_ratio))
