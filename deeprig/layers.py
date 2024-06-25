@@ -133,9 +133,10 @@ class Encoder(Layer):
 class Decoder(Layer):
     """Decoder layer."""
 
-    def __init__(self, size1, latent_factor_num, placeholders, act = tf.nn.sigmoid, **kwargs):
+    def __init__(self, size1, latent_factor_num, placeholders, act=tf.nn.sigmoid, **kwargs):
         super(Decoder, self).__init__(**kwargs)
         self.size1 = size1
+        self.act = act
         with tf.variable_scope(self.name + '_vars'):
             self.vars['weight3'] = glorot([latent_factor_num, latent_factor_num])
 
