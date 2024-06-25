@@ -30,8 +30,8 @@ def computCorr(data, t = 0.0):
 
     genes = data.columns
     corr = data.corr(method = "spearman")
-
     adj = np.array(abs(corr.values))
+
     return adj
 
 def prepareData(FLAGS, data_path, label_path, reverse_flags = 0):
@@ -72,7 +72,7 @@ data_file = input_path + dataset + '-ExpressionData.csv'
 label_file = input_path + dataset + '-network.csv'
 
 reverse_flags = 0   ###whether label file exists reverse regulations, 0 for DeepSem data, 1 for CNNC data
-labels, adj, AM, gene_names, TF = prepareData(FLAGS, data_file, label_file, reverse_flags)
+labels, adj, AM, gene_names, TF, node_feat = prepareData(FLAGS, data_file, label_file, reverse_flags)
 reorder = np.arange(labels.shape[0])
 np.random.shuffle(reorder)
 
@@ -103,5 +103,4 @@ for t in range(T):
         
 print("Predict complete!")
 print("RunTimes is:", "{:.5f}".format(time.time() - start))
-
 
