@@ -104,16 +104,13 @@ class DeepRIG(Model, ):
     def _loss(self):
         for var in self.layers[0].vars.values():
             self.loss += FLAGS.weight_decay * tf.nn.l2_loss(var)
-        # for var in self.layers[1].vars.values():
-        #     self.loss += FLAGS.weight_decay * tf.nn.l2_loss(var)
-
-        #         self.loss += euclidean_loss(self.outputs, self.placeholders['labels'])
-        self.loss += masked_accuracy(self.outputs, self.placeholders['labels'], self.placeholders['labels_mask'],
+        
+        self.loss += masked_accuracy_mse(self.outputs, self.placeholders['labels'], self.placeholders['labels_mask'],
                                      self.placeholders['negative_mask'])
 
     def _accuracy(self):
         #         self.accuracy = euclidean_loss(self.outputs, self.placeholders['labels'])
-        self.accuracy = masked_accuracy(self.outputs, self.placeholders['labels'], self.placeholders['labels_mask'],
+        self.accuracy = masked_accuracy_mse(self.outputs, self.placeholders['labels'], self.placeholders['labels_mask'],
                                         self.placeholders['negative_mask'])
 
     def _build(self):
@@ -125,6 +122,7 @@ class DeepRIG(Model, ):
                                    placeholders=self.placeholders
                                    ))
 
+
         self.layers.append(Encoder(input_dim=FLAGS.hidden1,
                                    output_dim=self.latent_factor_num,
                                    gene_size = self.size_gene,
@@ -134,10 +132,10 @@ class DeepRIG(Model, ):
                                    act = lambda x: x
                                    ))
 
-
         self.layers.append(Decoder(size1=self.size_gene,
                                    latent_factor_num=self.latent_factor_num,
-                                   placeholders = self.placeholders
+                                   placeholders = self.placeholders,
+                                   act = lambda x: x
                                    ))
 
     def predict(self):
