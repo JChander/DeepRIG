@@ -21,14 +21,14 @@ def sample_mask(idx, l):
 def load_data(adj, train_arr, test_arr, labels, AM):
     n_gene = AM.shape[0]
 
+    logits_train = sp.csr_matrix((labels[train_arr, 2], (labels[train_arr, 1], labels[train_arr, 1])), shape = (n_gene, n_gene)).toarray()
+    logits_train = logits_train.reshape([-1, 1])
+    
     logits_test = sp.csr_matrix((labels[test_arr, 2], (labels[test_arr, 0], labels[test_arr, 1])), shape = (n_gene, n_gene)).toarray()
-    #logits_test = sp.csr_matrix((labels[test_arr, 2], (labels[test_arr, 0] - 1, labels[test_arr, 1] - 1)),
-                                #shape=(n_gene, n_gene)).toarray()
     logits_test = logits_test.reshape([-1, 1])
 
     adj = preprocess_adj(adj)
-    logits_train = sp.csr_matrix((labels[train_arr, 2], (labels[train_arr, 1], labels[train_arr, 1])), shape = (n_gene, n_gene)).toarray()
-    logits_train = logits_train.reshape([-1, 1])
+    labels = abs(labels)
 
     train_mask = np.array(logits_train[:, 0], dtype=np.bool).reshape([-1, 1])
     test_mask = np.array(logits_test[:, 0], dtype=np.bool).reshape([-1, 1])
@@ -71,7 +71,7 @@ def preprocess_adj(adj):
     return adj_normalized
 
 
-def construct_feed_dict(adj, labels, labels_mask, negative_mask, placeholders):
+def construct_feed_dict(adj, features, labels, labels_mask, negative_mask, placeholders):
     """Construct feed dictionary."""
     feed_dict = dict()
     feed_dict.update({placeholders['adjacency_matrix']: adj})
@@ -95,24 +95,7 @@ def div_list(ls, n):
 def ROC(outs, labels, train_mask, test_mask, label_neg, gene_names, result_path):
     # scores = []
     results = pd.DataFrame(columns = ['Gene1', 'Gene2', 'Label', 'EdgeWeight'])
-    # for i in range(len(test_arr)):
-    #     l = test_arr[i]
-    #     score_l = outs[int(labels[l, 0]), int(labels[l, 1])]
-    #     scores.append(score_l)
-    #     new_df = pd.DataFrame({'Gene1': gene_names[labels[l, 0]],
-    #                                    'Gene2': gene_names[labels[l, 1]],
-    #                                    'Label': 1,
-    #                                    'EdgeWeight': score_l}, index=[1])
-    #     results = results.append(new_df, ignore_index=True)
-
-    # for i in range(label_neg.shape[0]):
-    #     score_i = outs[int(label_neg[i, 0]), int(label_neg[i, 1])]
-    #     scores.append(score_i)
-    #     new_df = pd.DataFrame({'Gene1': gene_names[int(label_neg[i, 0])],
-    #                                    'Gene2': gene_names[int(label_neg[i, 1])],
-    #                                    'Label': 0,
-    #                                    'EdgeWeight': score_i}, index=[1])
-    #     results = results.append(new_df, ignore_index=True)
+    
     train_mask = train_mask[:, 0].reshape(outs.shape)
     test_mask = test_mask[:, 0].reshape(outs.shape)
     
@@ -133,8 +116,3 @@ def ROC(outs, labels, train_mask, test_mask, label_neg, gene_names, result_path)
 
     results = results.sort_values(by = ['EdgeWeight'], axis = 0, ascending = False)
     results.to_csv(result_path, header=True, index=False)
-    # test_labels = np.ones((len(test_arr), 1))
-    # temp = np.zeros((label_neg.shape[0], 1))
-    # test_labels1 = np.vstack((test_labels, temp))
-    # test_labels1 = np.array(test_labels1, dtype=np.bool).reshape([-1, 1])
-    # return test_labels1, scores
