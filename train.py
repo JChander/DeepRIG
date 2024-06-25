@@ -22,12 +22,12 @@ def train(FLAGS, adj, features, train_arr, test_arr, labels, AM, gene_names, TF,
     tf.compat.v1.disable_eager_execution()
     placeholders = {
         'adjacency_matrix': tf.placeholder(tf.int32, shape=adj.shape),
-        'features': tf.placeholder(tf.float32, shape= features.shape),
+        'features': tf.placeholder(tf.float32, shape = features.shape),
         'labels': tf.placeholder(tf.float32, shape=(None, logits_train.shape[1])),
         'labels_mask': tf.placeholder(tf.int32),
         'negative_mask': tf.placeholder(tf.int32)
     }
-    
+
     input_dim = features.shape[1]
     # Create model
     model = model_func(placeholders, input_dim, size_gene, FLAGS.dim)
@@ -77,7 +77,7 @@ def train(FLAGS, adj, features, train_arr, test_arr, labels, AM, gene_names, TF,
 
     #Save results
     feed_dict_val = construct_feed_dict(adj, features, logits_test, test_mask, test_negative_mask, placeholders)
-    outs = sess.run(model.outputs, feed_dict=feed_dict_val)
+    outs, reps = sess.run([model.outputs, model.hid], feed_dict=feed_dict_val)
     outs = np.array(outs)[:, 0]
     outs = outs.reshape((size_gene, size_gene))
 
@@ -86,7 +86,7 @@ def train(FLAGS, adj, features, train_arr, test_arr, labels, AM, gene_names, TF,
     TF_mask = np.zeros(outs.shape)
     for i, item in enumerate(gene_names):
         for j in range(len(gene_names)):
-            if i == j or (logits_train[i, j] == 1):
+            if i == j or (logits_train[i, j] != 0):
                 continue
             if item in TF:
                 TF_mask[i, j] = 1
