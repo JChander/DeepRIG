@@ -1,7 +1,7 @@
 # DeepRIG
 A deep learning-based model for gene regulatary networks (GRNs) inferrence from scRNA-seq data that transforms gene expression matrix into a correlation-based co-expression network and decouples the non-linear gene regulation patterns using graph autoencoder model (GAE).
  
-Please see our manuscript for more details.
+Please see our manuscript [here](https://doi.org/10.1371/journal.pgen.1010942) for more details.
  
 ## Dependencies
  
@@ -68,3 +68,15 @@ Demo datasets used in DeepRIG:
 * mHSC-E Erythroid lineages of mouse hematopoietic stem cells
 * mHSC-L Lymphoid lineages of mouse hematopoietic stem cells
 * mHSC-GM Granulocyte-macrophage lineages of mouse hematopoietic stem cells
+
+## Citing
+If you find our paper and code useful, please consider citing as follows:
+```
+@article{DeepRIG,
+  title={Inferring gene regulatory network from single-cell transcriptomes with graph autoencoder model},
+  author={Jiacheng, Wang and Yaojia, Chen and Quan, Zou},
+  journal={PLoS Genetics},
+  doi = {10.1371/journal.pgen.1010942},
+  year={2023},
+}
+```
