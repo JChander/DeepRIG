@@ -10,9 +10,9 @@ Please see our manuscript [here](https://doi.org/10.1371/journal.pgen.1010942) f
 * tensorflow 2.4
 * numpy 1.19
 * pandas 1.3
-* h5py 2.10
-* scanpy 1.7
+* scanpy 1.9
 * scipy 1.7
+* networkx 2.7
 * scikit-learn 1.0
  
 ## Installation
@@ -24,9 +24,19 @@ The `new_environ_name` is the new environment name with any name you prefer. The
 ```
 >> conda activate new_environ_name
 ```
-Installing all the dependencies recorded in the `requirements.txt` file in this repository using conda:
+Installing all the dependencies in this repository using conda and pip:
 ```
->> conda install --yes --file requirements.txt
+>> conda install -c conda-forge cudatoolkit=11.0 cudnn=8.0 -y
+
+>> mkdir -p $CONDA_PREFIX/etc/conda/activate.d
+>> cat > $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh <<'EOF'
+>> export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+>> EOF
+
+>> pip install --upgrade pip setuptools wheel
+>> pip install tensorflow==2.4.0
+
+>> conda install -c conda-forge scanpy=1.9
 ```
 
 ## Usage
@@ -54,7 +64,7 @@ Example: Inferring GRNs from scRNA-seq of mouse embryonic stem cells (mESC) usin
 ### Evaluation
 Example: To evaluate the inferred results of DeepRIG from mESC dataset, run the following command:
 ```
-python evaluate.py --pred_file ./output/Inferred_result_500_ChIP-seq_mESC.csv --network ./Datasets/500_ChIP-seq_mESC/500_ChIP-seq_mESC-networks.csv
+python evaluate.py --pred_file ./output/Inferred_result_500_ChIP-seq_mESC.csv --network ./Datasets/500_ChIP-seq_mESC/500_ChIP-seq_mESC-network.csv
 ```
 
 ### Cell-type specific GRNs inferring
