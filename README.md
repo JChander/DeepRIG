@@ -16,6 +16,7 @@ Please see our manuscript [here](https://doi.org/10.1371/journal.pgen.1010942) f
 * scikit-learn 1.0
  
 ## Installation
+### Option 1: Conda environment
 Installing within a conda environment is recommended. After Anaconda is installed in your OS, create a new environment.
 ```
 >> conda create -n new_environ_name python=3.7
@@ -37,6 +38,30 @@ Installing all the dependencies in this repository using conda and pip:
 >> pip install tensorflow==2.4.0
 
 >> conda install -c conda-forge scanpy=1.9
+```
+
+### Option 2: Python venv environment
+Alternatively, DeepRIG can be installed in a Python virtual environment using venv. Please note that python -m venv only creates an isolated Python environment. It does not install CUDA or cuDNN. Therefore, CUDA 11.0 and cuDNN 8.0 must be available on the system, for example through HPC environment modules or an existing CUDA/cuDNN installation.
+
+Create and activate a virtual environment:
+```
+>> python3.7 -m venv ~/venvs/deeprig_tf240
+>> source ~/venvs/deeprig_tf240/bin/activate
+```
+If CUDA and cuDNN are provided by environment modules on an HPC system, load the required versions before installing or running TensorFlow:
+```
+>> module load cuda/11.0
+>> module load cudnn/8.0
+```
+Alternatively, if CUDA 11.0 and cuDNN 8.0 are installed in a custom location, add their library path to LD_LIBRARY_PATH:
+```
+>> export LD_LIBRARY_PATH=/path/to/cuda_cudnn/lib:$LD_LIBRARY_PATH
+```
+Install dependencies of DeepRIG:
+```
+>> pip install tensorflow==2.4.0
+>> pip install scanpy==1.9
+>> pip install numpy scipy pandas scikit-learn matplotlib seaborn networkx tqdm
 ```
 
 ## Usage
