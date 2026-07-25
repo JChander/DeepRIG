@@ -79,7 +79,7 @@ sort_by_variance = True
 output_dir = opts.outputDir
 os.makedirs(output_dir, exist_ok=True)
 print("\nReading %s" % (expr_file))
-expr_df = pd.read_csv(expr_file, header=0, index_col=0)
+expr_df = pd.read_csv(expr_file, header=0, index_col=0).T
 print("\nReading %s" % (gene_ordering_file))
 gene_df = pd.read_csv(gene_ordering_file, header=0, index_col=0)
 # for mESC only
@@ -157,7 +157,7 @@ if num_genes > 0:
     variable_genes = set(variable_genes_new) | set(variable_tfs)
 
 print("\nRestricting to %d genes" % (len(variable_genes)))
-expr_df = expr_df.loc[list(variable_genes)]
+expr_df = expr_df.loc[list(variable_genes)].T
 print("\nNew shape of Expression Data %d x %d" % (expr_df.shape[0],expr_df.shape[1]))
 
 expr_df.to_csv(output_dir+'/ExpressionData.csv')
