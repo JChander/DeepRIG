@@ -1,4 +1,8 @@
-
+# This script is adapted from the BEELINE project:
+#   https://github.com/Murali-group/BEELINE
+#
+# The original implementation is distributed under the BEELINE license.
+# Please see the original repository and LICENSE file for details.
 
 from __future__ import print_function
 
