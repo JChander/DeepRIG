@@ -157,10 +157,10 @@ if num_genes > 0:
     variable_genes = set(variable_genes_new) | set(variable_tfs)
 
 print("\nRestricting to %d genes" % (len(variable_genes)))
-expr_df = expr_df.loc[list(variable_genes)].T
-print("\nNew shape of Expression Data %d x %d" % (expr_df.shape[0],expr_df.shape[1]))
+expr_df = expr_df.loc[list(variable_genes)]
+print("\nNew shape of Expression Data %d genes x %d cells" % (expr_df.shape[0],expr_df.shape[1]))
 
-expr_df.to_csv(output_dir+'/ExpressionData.csv')
+expr_df.T.to_csv(output_dir+'/ExpressionData.csv')
 
 
 if opts.netFile != 'None':
